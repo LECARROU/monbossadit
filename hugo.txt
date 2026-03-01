@@ -1,0 +1,14 @@
+baseURL: "http://localhost/"
+languageCode: "fr"
+title: "monbossadit.com"
+pagination:
+  pagerSize: 5
+
+params:
+  defaultTheme: auto
+  ShowReadingTime: true
+  ShowShareButtons: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+theme: ["PaperMod"]
