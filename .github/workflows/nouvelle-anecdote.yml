@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Créer le fichier markdown
         env:
@@ -57,4 +59,4 @@ jobs:
           git config user.email "bot@monbossadit.fr"
           git add content/posts/
           git diff --staged --quiet || git commit -m "Nouvelle anecdote ajoutée"
-          git push
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/LECARROU/monbossadit.git
