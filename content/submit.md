@@ -74,12 +74,11 @@ document.getElementById('anecdoteForm').addEventListener('submit', async (e) => 
   btn.textContent = 'Envoi en cours...';
 
   try {
-    const res = await fetch('https://TON_WORKER.workers.dev/submit', {
+    const res = await fetch('https://sparkling-paper-f584.j-lecarrou.workers.dev/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         anecdote: document.getElementById('anecdote').value,
-        secteur:  document.getElementById('secteur').value,
         pseudo:   document.getElementById('pseudo').value || 'Anonyme'
       })
     });

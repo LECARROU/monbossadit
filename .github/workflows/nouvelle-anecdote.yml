@@ -1,0 +1,60 @@
+name: Nouvelle anecdote
+
+on:
+  repository_dispatch:
+    types: [nouvelle-anecdote]
+
+permissions:
+  contents: write
+
+jobs:
+  creer-anecdote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Créer le fichier markdown
+        env:
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: |
+          python3 << 'EOF'
+          import os, json, re, datetime, textwrap
+
+          payload  = json.loads(os.environ["PAYLOAD"])
+          anecdote = payload.get("anecdote", "").strip()
+          pseudo   = payload.get("pseudo", "Anonyme") or "Anonyme"
+
+          if not anecdote:
+              print("Anecdote vide, abandon.")
+              exit(0)
+
+          date     = datetime.datetime.now().strftime("%Y-%m-%d")
+          heure    = datetime.datetime.now().strftime("%H%M%S")
+          slug     = re.sub(r'[^a-z0-9]+', '-', anecdote[:40].lower()).strip('-')
+          filename = f"content/posts/{date}-{heure}-{slug}.md"
+
+          contenu = textwrap.dedent(f"""
+          ---
+          title: "{anecdote[:80].replace('"', "'")}"
+          date: {date}
+          author: "{pseudo}"
+          ---
+
+          {anecdote}
+          """).lstrip()
+
+          os.makedirs("content/posts", exist_ok=True)
+          with open(filename, "w", encoding="utf-8") as f:
+              f.write(contenu)
+
+          print(f"Fichier créé : {filename}")
+          EOF
+
+      - name: Commit et push
+        run: |
+          git config user.name "MonBossADit Bot"
+          git config user.email "bot@monbossadit.fr"
+          git add content/posts/
+          git diff --staged --quiet || git commit -m "Nouvelle anecdote ajoutée"
+          git push
